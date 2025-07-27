@@ -1,11 +1,7 @@
 import dash
-from dash import dcc, html, Input, Output, State, callback_context
+from dash import dcc, html, Input, Output, State
 import plotly.graph_objects as go
 import pandas as pd
-import base64
-import io
-import os
-
 app = dash.Dash(__name__)
 
 # Custom CSS styling
@@ -16,7 +12,6 @@ app.layout = html.Div([
         html.Div([
             # Top section with file browser
             html.Div([
-                html.H4("File Browser", style={'margin': '0 0 10px 0', 'color': '#333'}),
                 # Combined file path input and drag-drop area
                 dcc.Upload(
                     id='file-upload-area',
@@ -25,14 +20,16 @@ app.layout = html.Div([
                             id='file-path-input',
                             type='text',
                             placeholder='Enter file path or drag & drop files here...',
+                            disabled=True,
                             style={
                                 'width': '70%',
-                                'height': '40px',
+                                'height': '30px',
                                 'marginRight': '10px',
-                                'padding': '8px',
+                                'padding': '6px',
                                 'border': '1px solid #ccc',
                                 'borderRadius': '4px',
-                                'backgroundColor': 'white'
+                                'backgroundColor': '#f8f9fa',
+                                'cursor': 'default'
                             }
                         ),
                         # Browse button
@@ -41,7 +38,7 @@ app.layout = html.Div([
                             id='browse-button',
                             style={
                                 'width': '25%',
-                                'height': '40px',
+                                'height': '30px',
                                 'backgroundColor': '#007bff',
                                 'color': 'white',
                                 'border': 'none',
@@ -52,12 +49,6 @@ app.layout = html.Div([
                     ],
                     style={
                         'width': '100%',
-                        'padding': '10px',
-                        'borderWidth': '2px',
-                        'borderStyle': 'dashed',
-                        'borderColor': '#ccc',
-                        'borderRadius': '5px',
-                        'backgroundColor': '#f9f9f9',
                         'display': 'flex',
                         'alignItems': 'center'
                     },
@@ -165,9 +156,23 @@ app.layout = html.Div([
             'height': '100vh',
             'display': 'flex',
             'flexDirection': 'column'
-        }),
+        }, id='left-panel'),
 
-        # Right panel - Plot area
+        # Draggable divider
+        html.Div(
+            id='divider',
+            style={
+                'width': '4px',
+                'height': '100vh',
+                'backgroundColor': '#ddd',
+                'cursor': 'col-resize',
+                'userSelect': 'none',
+                'borderLeft': '1px solid #ccc',
+                'borderRight': '1px solid #ccc'
+            }
+        ),
+
+
         html.Div([
             html.H4("Data Visualization", style={'margin': '0 0 15px 0', 'color': '#333'}),
             dcc.Graph(
@@ -194,7 +199,7 @@ app.layout = html.Div([
         ], style={
             'width': '48%',
             'padding': '20px'
-        })
+        }, id='right-panel')
 
     ], style={'height': '100vh', 'backgroundColor': '#f5f5f5', 'display': 'flex'}),
 
@@ -203,6 +208,78 @@ app.layout = html.Div([
     dcc.Store(id='string-list-store'),
     dcc.Store(id='python-context-store')
 ], style={'margin': '0', 'padding': '0', 'fontFamily': 'Arial, sans-serif', 'color': '#333'})
+
+# Clientside callback for draggable divider
+app.clientside_callback(
+    """
+    function(n_clicks) {
+        let isDragging = false;
+        let startX = 0;
+        let startLeftWidth = 0;
+        let startRightWidth = 0;
+        
+        const divider = document.getElementById('divider');
+        const leftPanel = document.getElementById('left-panel');
+        const rightPanel = document.getElementById('right-panel');
+        const container = divider.parentElement;
+        
+        if (!divider || !leftPanel || !rightPanel) return window.dash_clientside.no_update;
+        
+        function onMouseDown(e) {
+            isDragging = true;
+            startX = e.clientX;
+            
+            // Get current widths as percentages
+            const containerWidth = container.offsetWidth;
+            startLeftWidth = (leftPanel.offsetWidth / containerWidth) * 100;
+            startRightWidth = (rightPanel.offsetWidth / containerWidth) * 100;
+            
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+            e.preventDefault();
+        }
+        
+        function onMouseMove(e) {
+            if (!isDragging) return;
+            
+            const deltaX = e.clientX - startX;
+            const containerWidth = container.offsetWidth;
+            const deltaPercent = (deltaX / containerWidth) * 100;
+            
+            let newLeftWidth = startLeftWidth + deltaPercent;
+            let newRightWidth = startRightWidth - deltaPercent;
+            
+            // Set minimum widths (20% and 20%)
+            if (newLeftWidth < 20) {
+                newLeftWidth = 20;
+                newRightWidth = 76; // 100 - 20 - 4 (divider)
+            }
+            if (newRightWidth < 20) {
+                newRightWidth = 20;
+                newLeftWidth = 76; // 100 - 20 - 4 (divider)
+            }
+            
+            leftPanel.style.width = newLeftWidth + '%';
+            rightPanel.style.width = newRightWidth + '%';
+        }
+        
+        function onMouseUp() {
+            isDragging = false;
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        }
+        
+        // Remove existing listeners to prevent duplicates
+        divider.removeEventListener('mousedown', onMouseDown);
+        // Add the mousedown listener
+        divider.addEventListener('mousedown', onMouseDown);
+        
+        return window.dash_clientside.no_update;
+    }
+    """,
+    Output('divider', 'style'),
+    Input('divider', 'id')
+)
 
 # Callback for file upload
 @app.callback(

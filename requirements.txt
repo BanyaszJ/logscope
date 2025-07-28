@@ -1,3 +1,6 @@
 dash~=3.1.1
 plotly~=6.2.0
 pandas~=2.3.1
+numpy~=1.24.0
+scipy~=1.11.0
+matplotlib~=3.7.0

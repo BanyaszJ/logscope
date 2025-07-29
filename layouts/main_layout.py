@@ -22,12 +22,13 @@ def create_main_layout():
                 style=DIVIDER
             ),
 
-            create_right_panel()
-
+            create_right_panel(),
+            html.P(id='placeholder')
         ], style=MAIN_CONTAINER),
 
         # Hidden stores for data
         dcc.Store(id='uploaded-files-store'),
+        dcc.Store(id='uploaded-file-mdf-data'),
         dcc.Store(id='string-list-store'),
         dcc.Store(id='python-context-store')
 

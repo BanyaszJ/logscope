@@ -32,5 +32,5 @@ def create_file_upload_section():
             ],
             style=FILE_UPLOAD_CONTAINER,
             multiple=True
-        )
+        ),
     ], style=SECTION_CONTAINER)

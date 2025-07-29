@@ -80,7 +80,7 @@ FILE_UPLOAD_CONTAINER = {
 }
 
 FILE_PATH_INPUT = {
-    'width': '70%',
+    'width': '95%',
     'height': '30px',
     'marginRight': '10px',
     'padding': '6px',

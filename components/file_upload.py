@@ -20,7 +20,7 @@ def create_file_upload_section():
                     id='file-path-input',
                     type='text',
                     placeholder='Enter file path or drag & drop files here...',
-                    disabled=True,
+                    disabled=False,
                     style=FILE_PATH_INPUT
                 ),
                 # Browse button
@@ -31,6 +31,6 @@ def create_file_upload_section():
                 )
             ],
             style=FILE_UPLOAD_CONTAINER,
-            multiple=True
+            multiple=False
         ),
     ], style=SECTION_CONTAINER)

@@ -12,7 +12,36 @@ from styles.styles import (
 def create_data_fields_section():
     """Create the data fields section with interactive signal list."""
     return html.Div([
-        html.H4("Signal List", style=SECTION_HEADER),
+        # Header with title and clear button
+        html.Div([
+            html.H4("Signal List", style={
+                **SECTION_HEADER,
+                'margin': '0',
+                'flex': '1'
+            }),
+            html.Button(
+                'Clear Plot',
+                id='clear-plot-btn',
+                style={
+                    'padding': '8px 16px',
+                    'backgroundColor': '#dc3545',
+                    'color': 'white',
+                    'border': 'none',
+                    'borderRadius': '4px',
+                    'cursor': 'pointer',
+                    'fontSize': '13px',
+                    'fontWeight': 'bold',
+                    'minWidth': '90px',
+                    'height': '36px'
+                }
+            )
+        ], style={
+            'display': 'flex',
+            'alignItems': 'center',
+            'justifyContent': 'space-between',
+            'marginBottom': '10px'
+        }),
+
         html.Div(
             id='signal-list-container',
             children=[
@@ -41,7 +70,7 @@ def create_data_fields_section():
         ),
         html.Div([
             html.Small(
-                "💡 Double-click signals to plot them",
+                "💡 Click signals to plot them | Clear button removes all plots",
                 style={
                     'color': '#666',
                     'fontStyle': 'italic',
@@ -65,15 +94,46 @@ def create_signal_item(signal_name, index):
         className='signal-item',
         **{'data-signal-name': signal_name},
         style={
-            'padding': '8px 12px',
-            'margin': '2px 0',
-            'backgroundColor': '#f8f9fa',
-            'border': '1px solid #dee2e6',
-            'borderRadius': '4px',
+            'padding': '4px 8px',
+            'margin': '1px 0',
             'cursor': 'pointer',
             'userSelect': 'none',
             'fontSize': '13px',
             'fontFamily': 'monospace',
-            'transition': 'all 0.2s ease'
+            'color': '#333',
+            'borderRadius': '3px'
         }
+    )
+
+
+def create_signal_item_with_state(signal_name, index, is_plotted=False):
+    """Create an individual clickable signal item with plotted state styling."""
+    base_style = {
+        'padding': '4px 8px',
+        'margin': '1px 0',
+        'cursor': 'pointer',
+        'userSelect': 'none',
+        'fontSize': '13px',
+        'fontFamily': 'monospace',
+        'borderRadius': '3px'
+    }
+
+    # Apply different styles based on plotted state
+    if is_plotted:
+        base_style.update({
+            'backgroundColor': '#007bff',
+            'color': 'white'
+        })
+    else:
+        base_style.update({
+            'backgroundColor': 'transparent',
+            'color': '#333'
+        })
+
+    return html.Div(
+        signal_name,
+        id={'type': 'signal-item', 'index': index},
+        className='signal-item',
+        **{'data-signal-name': signal_name},
+        style=base_style
     )

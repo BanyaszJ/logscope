@@ -30,6 +30,7 @@ def create_main_layout():
         dcc.Store(id='uploaded-files-store'),
         dcc.Store(id='uploaded-file-mdf-data'),
         dcc.Store(id='string-list-store'),
-        dcc.Store(id='python-context-store')
+        dcc.Store(id='python-context-store'),
+        dcc.Store(id='plotted-signals-store')  # Store for tracking plotted signals
 
     ], style=APP_CONTAINER)

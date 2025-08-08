@@ -9,7 +9,6 @@ from callbacks import register_all_callbacks
 
 
 def create_app():
-    """Create and configure the Dash application."""
     app = dash.Dash(__name__)
 
     app.layout = create_main_layout()

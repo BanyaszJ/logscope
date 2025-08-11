@@ -1,6 +1,6 @@
 """
 Main layout structure for the Dash application.
-Combines left and right panels with the draggable divider.
+Combines left and right panels + a draggable divider.
 """
 
 from dash import html, dcc
@@ -23,7 +23,7 @@ def create_main_layout():
             ),
 
             create_right_panel(),
-            html.P(id='placeholder')
+            html.P(id='placeholder')  # for debugging
         ], style=MAIN_CONTAINER),
 
         # Hidden stores for data

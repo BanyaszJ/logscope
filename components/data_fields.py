@@ -56,7 +56,7 @@ def create_data_fields_section():
                 )
             ],
             style={
-                'height': '300px',
+                'height': '400px',
                 'overflowY': 'auto',
                 'border': '1px solid #ddd',
                 'borderRadius': '4px',
@@ -68,16 +68,16 @@ def create_data_fields_section():
             id='string-list-output',
             style=DATA_OUTPUT
         ),
-        html.Div([
-            html.Small(
-                "💡 Click signals to plot them | Clear button removes all plots",
-                style={
-                    'color': '#666',
-                    'fontStyle': 'italic',
-                    'fontSize': '11px'
-                }
-            )
-        ], style={'marginTop': '5px'}),
+        # html.Div([
+        #     html.Small(
+        #         "💡 Click signals to plot them | Click again to remove them | Plotted signals are highlighted with blue | 'Clear plot' button removes all plots",
+        #         style={
+        #             'color': '#666',
+        #             'fontStyle': 'italic',
+        #             'fontSize': '11px'
+        #         }
+        #     )
+        # ], style={'marginTop': '5px'}),
         # Hidden textarea for backward compatibility
         dcc.Textarea(
             id='string-list-field',

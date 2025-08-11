@@ -3,11 +3,10 @@ Data processing callbacks for signal selection and plotting with ctrl+click supp
 """
 
 import asammdf
-import pandas as pd
 import plotly.graph_objects as go
 from dash import Input, Output, State, ALL, callback_context, html
 from dash.exceptions import PreventUpdate
-from components.data_fields import create_signal_item, create_signal_item_with_state
+from components.data_fields import create_signal_item_with_state
 
 
 def register_data_callbacks(app):
@@ -142,6 +141,7 @@ def register_data_callbacks(app):
 # Global cache for MDF files to avoid re-opening
 _mdf_cache = {}
 
+
 def get_cached_mdf(file_path, file_id):
     """Get cached MDF object or create new one."""
     cache_key = f"{file_path}_{file_id}"
@@ -152,6 +152,7 @@ def get_cached_mdf(file_path, file_id):
 
     return _mdf_cache[cache_key]
 
+
 def clear_mdf_cache():
     """Clear MDF cache and close all files."""
     for mdf in _mdf_cache.values():
@@ -160,6 +161,7 @@ def clear_mdf_cache():
         except:
             pass
     _mdf_cache.clear()
+
 
 def create_signals_plot(file_path, signal_names, file_id=None):
     """Create a plot with multiple signals."""
@@ -194,7 +196,7 @@ def create_signals_plot(file_path, signal_names, file_id=None):
 
         # Colors for different signals
         colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
-                 '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
+                  '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
 
         plotted_count = 0
         for i, signal_name in enumerate(signal_names):
@@ -241,7 +243,7 @@ def create_signals_plot(file_path, signal_names, file_id=None):
                     xanchor='left',
                     yanchor='top',
                     bgcolor='rgba(255, 255, 255, 0.8)',  # Semi-transparent white background
-                    bordercolor='rgba(0, 0, 0, 0.2)',   # Light border
+                    bordercolor='rgba(0, 0, 0, 0.2)',  # Light border
                     borderwidth=1,
                     font=dict(size=11)  # Slightly smaller font for compactness
                 ),

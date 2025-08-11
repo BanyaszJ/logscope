@@ -107,7 +107,7 @@ DATA_FIELDS_CONTAINER = {
     'padding': '15px',
     'border': f'1px solid {COLORS["border"]}',
     'borderRadius': '5px',
-    'marginBottom': '15px',
+    'marginBottom': '5px',
     'backgroundColor': COLORS['white'],
     'flex': '1',
     'display': 'flex',

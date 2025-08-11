@@ -10,6 +10,7 @@ import pandas as pd
 from dash import Input, Output, State, callback_context, html
 from dash.exceptions import PreventUpdate
 import uuid
+from signal_access import create_signal_accessor
 
 
 def register_file_callbacks(app):
@@ -87,6 +88,8 @@ def register_file_callbacks(app):
                     files_data = result['data']
                     path_display = manual_path.strip()
                     signals_text = result['signals_text']
+                    # Inject signal accessor into Python console
+                    inject_signal_accessor(files_data['file_path'], files_data['file_id'])
                 else:
                     signals_text = f"Error: {result['error']}"
             return files_data, path_display, signals_text, None, None
@@ -109,6 +112,8 @@ def register_file_callbacks(app):
                     files_data = result['data']
                     path_display = temp_path
                     signals_text = result['signals_text']
+                    # Inject signal accessor into Python console
+                    inject_signal_accessor(files_data['file_path'], files_data['file_id'])
                 else:
                     signals_text = f"Error: {result['error']}"
                     # Clean up temp file on error
@@ -167,6 +172,34 @@ def register_file_callbacks(app):
             # Brief visual feedback
             return current_style
         return current_style
+
+
+def inject_signal_accessor(file_path, file_id):
+    """Inject signal accessor into Python console namespace."""
+    try:
+        # Import the console namespace from python_console module
+        from callbacks.python_console import console_namespace
+
+        # Close any existing signal accessor
+        if 'signal' in console_namespace and hasattr(console_namespace['signal'], 'close'):
+            try:
+                console_namespace['signal'].close()
+            except:
+                pass
+
+        # Create new signal accessor
+        signal_accessor = create_signal_accessor(file_path, file_id)
+
+        # Inject into console namespace
+        console_namespace['signal'] = signal_accessor
+
+        print(f"Signal accessor injected: {len(signal_accessor.list_signals())} signals available")
+        print("Use 'signal.your_signal_name' to access signal data")
+        print("Use 'signal.list_signals()' to see all available signals")
+        print("Use 'signal.search_signals(\"pattern\")' to search for signals")
+
+    except Exception as e:
+        print(f"Error injecting signal accessor: {e}")
 
 
 def save_uploaded_file(contents, filename, file_id):
